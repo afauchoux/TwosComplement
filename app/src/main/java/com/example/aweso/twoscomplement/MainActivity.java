@@ -1,5 +1,6 @@
 package com.example.aweso.twoscomplement;
 
+import android.support.v4.app.NotificationCompatSideChannelService;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -81,11 +82,6 @@ public class MainActivity extends AppCompatActivity
         temp += "1";
 
         String answer = "";
-        //carry = 0
-        //"01000
-        //"10111"
-        //"00001"
-        //"11000"
 
         for(int i = bin.length() - 1; i >= 0; i--)
         {
@@ -134,7 +130,40 @@ public class MainActivity extends AppCompatActivity
         else
         {
             //we need to actually decode the value to get the correct negative decimal number.
+            int carry = 0;
+            int borrow = 0;
+            String temp = "";
+            for(int i = 0; i < currentEncodedValue.length()-1; i++)
+            {
+                temp += "0";
+            }
+            temp += "1";
 
+            String answer = "";
+
+            for(int i = currentEncodedValue.length() - 1; i >= 0; i--)
+            {
+                int n1 = currentEncodedValue.charAt(i) == '0'?0:1;
+                int n2 = temp.charAt(i) == '0'?0:1;
+                int sum = (n1 - borrow) - n2;
+                if(sum == 1)
+                {
+                    borrow = 0;
+                    answer = 1 + answer;
+                }
+                else if (sum == -1)
+                {
+                    borrow = 1;
+                    answer = 1 + answer;
+                }
+                else
+                {
+                    borrow = 0;
+                    answer = 0 + answer;
+                }
+            }
+            String flippedAnswer = this.flipTheBits("" + answer);
+            this.decodeTV.setText("-" + this.binaryToDecimal(flippedAnswer));
         }
     }
 
